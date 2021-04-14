@@ -43,4 +43,14 @@ public interface ItemServiceFeign {
     @RequestMapping("service/item/deleteItemById")
     Integer deleteItemById(@RequestParam Long itemId);
 
+
+    @RequestMapping("service/itemParam/selectItemParamAll")
+    PageResult selectItemParamAll();
+
+
+    @RequestMapping("service/itemParam/insertItemParam")
+    Integer insertItemParam(TbItemParam tbItemParam);
+
+    @RequestMapping("service/itemParam/deleteItemParamById")
+    Integer deleteItemParamById(@RequestParam Long id);
 }

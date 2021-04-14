@@ -34,7 +34,7 @@ public class ItemController {
         if(pageResult != null){
             return Result.ok(pageResult);
         }
-        return Result.error("查都查不出来啊");
+        return Result.error("查都查不出来啊。。。。。。");
     }
 
     @RequestMapping("insertTbItem")
@@ -57,7 +57,6 @@ public class ItemController {
 
 
 
-
     @RequestMapping("preUpdateItem")
     public Result preUpdateItem(Long itemId){
         Map<String, Object> map = itemServiceFeign.preUpdateItem(itemId);
@@ -74,6 +73,6 @@ public class ItemController {
         if(integer==3){
             return Result.ok();
         }
-        return Result.error("修改失败 ");
+        return Result.error("修改失败");
     }
 }
