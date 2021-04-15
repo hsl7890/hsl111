@@ -2,6 +2,7 @@ package com.usian.Controller;
 
 import com.usian.feign.ItemServiceFeign;
 import com.usian.pojo.TbItemCat;
+import com.usian.utils.CatResult;
 import com.usian.utils.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,4 +26,6 @@ public class ItemCategoryController {
         }
         return Result.error("查不出来， 爱咋咋地");
     }
+
+
 }
