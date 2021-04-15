@@ -40,7 +40,7 @@ public class ItemParamController {
         if(i > 0){
             return Result.ok();
         }
-        return Result.error("保存失败，你咋啥也不是呢。。。");
+        return Result.error("保存失败");
     }
 
     @RequestMapping("deleteItemParamById")
@@ -49,7 +49,7 @@ public class ItemParamController {
         if(i > 0){
             return Result.ok();
         }
-        return Result.error("保存失败，你咋啥也不是呢。。。");
+        return Result.error("删除失败");
     }
 
 }
