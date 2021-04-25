@@ -2,6 +2,7 @@ package com.usian.Service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.usian.config.RedisClient;
 import com.usian.mapper.TbContentMapper;
 import com.usian.pojo.TbContent;
 import com.usian.pojo.TbContentExample;
@@ -10,9 +11,6 @@ import com.usian.utils.PageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,6 +31,13 @@ public class ContentService {
 
     @Value("${AD_WIDTHB}")
     private Integer AD_WIDTHB;
+
+    @Autowired
+    private RedisClient redisClient;
+
+    @Value("${PORTAL_AD_KEY}")
+    private String portal_ad_redis_key;
+
 
 
     @Autowired
@@ -69,14 +74,20 @@ public class ContentService {
     }
 
     public List<AdNode> selectFrontendContentByAD() {
-        // 查询TbContent
-        TbContentExample tbContentExample = new TbContentExample();
-        TbContentExample.Criteria criteria = tbContentExample.createCriteria();
+        // 先从缓存redis中获取广告
+        List<AdNode> redisAdNodeList = (List<AdNode>)redisClient.hget(portal_ad_redis_key, AD_CATEGORY_ID.toString());
+        if(redisAdNodeList != null){
+            System.out.println("我是从redis中取到的数据。。。。。。");
+            return redisAdNodeList;
+        }
+        System.out.println("我要从mysql中取到的数据。。。。。。");
+        TbContentExample example = new TbContentExample();
+        TbContentExample.Criteria criteria = example.createCriteria();
         criteria.andCategoryIdEqualTo(AD_CATEGORY_ID);
-        List<TbContent> tbContentList =
-                tbContentMapper.selectByExample(tbContentExample);
-        List<AdNode> adNodeList = new ArrayList<AdNode>();
-        for (TbContent tbContent : tbContentList) {
+        List<TbContent> list = tbContentMapper.selectByExample(example);
+
+        List<AdNode> adNodeList = new ArrayList<>();
+        for (TbContent tbContent : list) {
             AdNode adNode = new AdNode();
             adNode.setSrc(tbContent.getPic());
             adNode.setSrcB(tbContent.getPic2());
@@ -87,6 +98,9 @@ public class ContentService {
             adNode.setWidthB(AD_WIDTHB);
             adNodeList.add(adNode);
         }
+
+        // 将从数据库中查询出的内容放入redis中
+        redisClient.hset(portal_ad_redis_key, AD_CATEGORY_ID.toString(), adNodeList);
         return adNodeList;
     }
 
